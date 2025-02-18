@@ -22,15 +22,27 @@
                             `ようこそ ${profile.displayName} さん！ (店舗ID: ${storeId})`;
 
                         // Google スプレッドシートに保存
-                        fetch("https://script.google.com/macros/s/AKfycbwgmYOBZkJAkC9x4vIyIvhqclyKix4Z6bqYlFhUNjJE-VsYCyKmsntrbWMimmMK6wR4/exec", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                userId: profile.userId,
-                                displayName: profile.displayName,
-                                storeId: storeId
-                            })
-                        });
+                        const url = "https://script.google.com/macros/s/AKfycbwgmYOBZkJAkC9x4vIyIvhqclyKix4Z6bqYlFhUNjJE-VsYCyKmsntrbWMimmMK6wR4/exec";
+                        const options = {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                          },
+                          body: JSON.stringify({
+                            userId: profile.userId,
+                            displayName: profile.displayName,
+                            storeId: storeId
+                          }),
+                        };
+                        fetchData(url, options);
+                        async function fetchData(url, options) {
+                          try {
+                            const response = await fetch(url, options);
+                            const data = await response.json();
+                          } catch (error) {
+                            console.error("Error:", error);
+                          }
+                        }
                     });
                 })
                 .catch(err => console.error("LIFFエラー", err));
