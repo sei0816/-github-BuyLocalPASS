@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>サブスク登録</title>
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+</head>
+<body>
+    <h1>サブスク登録</h1>
+    <p id="message">LINEログイン中...</p>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            liff.init({ liffId: "2006765449-nl5DPN6w" })
+                .then(() => {
+                    const params = new URLSearchParams(window.location.search);
+                    const storeId = params.get("store_id");
+
+                    return liff.getProfile().then(profile => {
+                        document.getElementById("message").innerText =
+                            `ようこそ ${profile.displayName} さん！ (店舗ID: ${storeId})`;
+
+                        // Google スプレッドシートに保存
+                        fetch("https://script.google.com/macros/s/AKfycbwgmYOBZkJAkC9x4vIyIvhqclyKix4Z6bqYlFhUNjJE-VsYCyKmsntrbWMimmMK6wR4/exec", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                                userId: profile.userId,
+                                displayName: profile.displayName,
+                                storeId: storeId
+                            })
+                        });
+                    });
+                })
+                .catch(err => console.error("LIFFエラー", err));
+        });
+    </script>
+</body>
+</html>
